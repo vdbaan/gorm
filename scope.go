@@ -344,7 +344,9 @@ func (scope *Scope) CombinedConditionSql() string {
 	joinSQL := scope.joinsSQL()
 	whereSQL := scope.whereSQL()
 	if scope.Search.raw {
-		whereSQL = strings.TrimSuffix(strings.TrimPrefix(whereSQL, "WHERE ("), ")")
+		if strings.HasPrefix(whereSQL,"WHERE (") {
+			whereSQL = strings.TrimSuffix(strings.TrimPrefix(whereSQL, "WHERE ("), ")")
+		}
 	}
 	return joinSQL + whereSQL + scope.groupSQL() +
 		scope.havingSQL() + scope.orderSQL() + scope.limitAndOffsetSQL()
