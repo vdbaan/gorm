@@ -844,7 +844,12 @@ func (scope *Scope) joinsSQL() string {
 
 func (scope *Scope) prepareQuerySQL() {
 	if scope.Search.raw {
-		scope.Raw(scope.CombinedConditionSql())
+		combinedConditionSql := scope.CombinedConditionSql()
+		if strings.HasPrefix(combinedConditionSql,"SELECT ") {
+			scope.Raw(combinedConditionSql)
+		} else {
+			scope.Raw(fmt.Sprintf("SELECT %v FROM %v %v", scope.selectSQL(), scope.QuotedTableName(), scope.CombinedConditionSql()))
+		}
 	} else {
 		scope.Raw(fmt.Sprintf("SELECT %v FROM %v %v", scope.selectSQL(), scope.QuotedTableName(), scope.CombinedConditionSql()))
 	}
